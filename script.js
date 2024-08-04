@@ -4,7 +4,8 @@ let payFrequency = localStorage.getItem('payFrequency') || '';
 let income = parseFloat(localStorage.getItem('income')) || 0;
 let payday = localStorage.getItem('payday') || '';
 let viewMode = localStorage.getItem('viewMode') || 'payCycle';
-let generatedPayCycles = 12; // Initially generate 12 months of pay cycles
+let darkMode = localStorage.getItem('darkMode') === 'true';
+let generatedPayCycles = 12; // Generate 12 months of pay cycles
 let revealedPayCycles = 3; // Initially reveal 3 pay cycles
 
 // Constants
@@ -16,7 +17,8 @@ function saveToLocalStorage() {
     localStorage.setItem('income', income.toString());
     localStorage.setItem('payday', payday);
     localStorage.setItem('viewMode', viewMode);
-    console.log("Data saved to localStorage:", { payFrequency, income, payday, viewMode });
+    localStorage.setItem('darkMode', darkMode);
+    console.log("Data saved to localStorage:", { payFrequency, income, payday, viewMode, darkMode });
 }
 
 function goToStep2() {
@@ -62,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateBillsTable();
     updateAccordion();
+
+    // Set dark mode if enabled
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.container').classList.add('dark-mode');
+    }
 
     // Add event listeners here
     const addBillButton = document.getElementById('addBillButton');
@@ -486,6 +494,14 @@ window.onclick = function(event) {
     if (event.target == document.getElementById('incomeModal')) {
         closeIncomeModal();
     }
+}
+
+// Dark mode toggle function
+function toggleDarkMode() {
+    darkMode = !darkMode;
+    document.body.classList.toggle('dark-mode');
+    document.querySelector('.container').classList.toggle('dark-mode');
+    saveToLocalStorage();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
