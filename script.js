@@ -422,6 +422,7 @@ function resetLocalStorage() {
     }
 }
 
+// Modal functions
 function openModal() {
     document.getElementById('billModal').style.display = 'block';
 }
@@ -431,10 +432,9 @@ function closeModal() {
 }
 
 function openIncomeModal() {
-    const formattedPayday = new Date(payday).toISOString().split('T')[0];
-    document.getElementById('income').value = income;
-    document.getElementById('frequency').value = payFrequency;
-    document.getElementById('payday').value = formattedPayday;
+    document.getElementById('editFrequency').value = payFrequency;
+    document.getElementById('editIncome').value = income;
+    document.getElementById('editPayday').value = payday;
     document.getElementById('incomeModal').style.display = 'block';
 }
 
@@ -443,16 +443,29 @@ function closeIncomeModal() {
 }
 
 function updateIncome() {
-    income = parseFloat(document.getElementById('income').value);
-    payFrequency = document.getElementById('frequency').value;
-    payday = document.getElementById('payday').value;
-
-    if (isNaN(income) || income <= 0) {
-        alert("Please enter a valid positive income.");
-        return;
-    }
-
+    payFrequency = document.getElementById('editFrequency').value;
+    income = parseFloat(document.getElementById('editIncome').value);
+    payday = document.getElementById('editPayday').value;
     saveToLocalStorage();
-    updateAccordion();
-    closeIncomeModal();
+    location.reload();
 }
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('billModal')) {
+        closeModal();
+    }
+    if (event.target == document.getElementById('incomeModal')) {
+        closeIncomeModal();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (income) {
+        const yearlyIncome = calculateYearlyIncome(payFrequency, income);
+        document.getElementById('incomeTable').innerHTML += `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${new Date(payday).toLocaleDateString()}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+    updateBillsTable();
+    updateAccordion();
+});
