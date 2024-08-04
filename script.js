@@ -5,7 +5,7 @@ let income = parseFloat(localStorage.getItem('income')) || 0;
 let payday = localStorage.getItem('payday') || '';
 let viewMode = localStorage.getItem('viewMode') || 'payCycle';
 let darkMode = localStorage.getItem('darkMode') === 'true';
-let generatedPayCycles = 26; // Generate 12 months of pay cycles
+let generatedPayCycles = 12; // Generate 12 months of pay cycles
 let revealedPayCycles = 3; // Initially reveal 3 pay cycles
 
 // Constants
@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBillsTable();
     updateAccordion();
 
-    // Set dark mode if enabled
     if (darkMode) {
         document.body.classList.add('dark-mode');
         document.querySelector('.container').classList.add('dark-mode');
@@ -214,7 +213,7 @@ function updateAccordion() {
                 day: '2-digit',
                 year: 'numeric'
             });
-            accordionContainer.innerHTML += `<button class="accordion"><span>${formattedStartDate} - ${formattedEndDate}</span><span class="leftover">Leftover: <span class="amount">$${leftoverAmount.toFixed(2)}</span></span><span class="arrow">▶</span></button><div class="panel"><div class="pay-cycle"><table><tr><td colspan="2">Income:</td><td class="positive right-align">$${income.toFixed(2)}</td></tr><tr><td colspan="2">Total Bills:</td><td class="negative right-align">-$${cycleTotal.toFixed(2)}</td></tr>${cycleBills}</table></div></div>`;
+            accordionContainer.innerHTML += `<button class="accordion"><span>${formattedStartDate} - ${formattedEndDate}</span><span class="leftover ${leftoverClass}">Leftover: <span class="amount">$${leftoverAmount.toFixed(2)}</span></span><span class="arrow">▶</span></button><div class="panel"><div class="pay-cycle"><table><tr><td colspan="2">Income:</td><td class="positive right-align">$${income.toFixed(2)}</td></tr><tr><td colspan="2">Total Bills:</td><td class="negative right-align">-$${cycleTotal.toFixed(2)}</td></tr>${cycleBills}</table></div></div>`;
             chartData.dates.push(formattedStartDate);
             chartData.totals.push(cycleTotal);
         });
@@ -229,7 +228,7 @@ function updateAccordion() {
                 leftoverClass = leftoverAmount >= 0 ? 'positive' : 'negative';
 
             if (index >= revealedPayCycles) return;
-            accordionContainer.innerHTML += `<button class="accordion"><span>${monthYear}</span><span class="leftover">Leftover: <span class="amount">$${leftoverAmount.toFixed(2)}</span></span><span class="arrow">▶</span></button><div class="panel"><div class="pay-cycle"><table><tr><td colspan="2">Income (${payDatesForMonth.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })).join(', ')}):</td><td class="positive right-align">$${monthIncome.toFixed(2)}</td></tr><tr><td colspan="2">Total Bills:</td><td class="negative right-align">-$${monthTotal.toFixed(2)}</td></tr>${billsForMonth}</table></div></div>`;
+            accordionContainer.innerHTML += `<button class="accordion"><span>${monthYear}</span><span class="leftover ${leftoverClass}">Leftover: <span class="amount">$${leftoverAmount.toFixed(2)}</span></span><span class="arrow">▶</span></button><div class="panel"><div class="pay-cycle"><table><tr><td colspan="2">Income (${payDatesForMonth.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })).join(', ')}):</td><td class="positive right-align">$${monthIncome.toFixed(2)}</td></tr><tr><td colspan="2">Total Bills:</td><td class="negative right-align">-$${monthTotal.toFixed(2)}</td></tr>${billsForMonth}</table></div></div>`;
         });
     }
 
@@ -285,7 +284,7 @@ function getBillRowsForCycle(bill, dates) {
             if (billDueDate >= dates.start && billDueDate <= dates.end) {
                 rows += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
             }
-            billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
+            billDueDate = getNextBillDate(billDueDate, bill.frequency);
         }
     }
     return rows;
@@ -302,7 +301,7 @@ function getBillTotalForCycle(bill, dates) {
             if (billDueDate >= dates.start && billDueDate <= dates.end) {
                 total += bill.amount;
             }
-            billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
+            billDueDate = getNextBillDate(billDueDate, bill.frequency);
         }
     }
     return total;
@@ -318,7 +317,7 @@ function calculateMonthlyView() {
     let endViewDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + generatedPayCycles, 0);
     while (date <= endViewDate) {
         payDates.push(new Date(date));
-        date = adjustDate(getNextBillDate(new Date(date), payFrequency));
+        date = getNextBillDate(new Date(date), payFrequency);
     }
 
     for (let i = 0; i < generatedPayCycles; i++) {
@@ -327,27 +326,20 @@ function calculateMonthlyView() {
         let monthName = startDate.toLocaleString('default', { month: 'long' });
         monthlyData.dates.push(`${monthName} ${currentDate.getFullYear()}`);
 
-        let monthTotal = 0;
-        let monthBills = '';
-        let monthIncome = 0;
-        let monthPayDates = [];
-
-        // Calculate total income for the month
+        let monthIncome = 0, monthTotal = 0, billsForMonth = '', payDatesForMonth = [];
         payDates.forEach(payDate => {
             if (payDate >= startDate && payDate <= endDate) {
                 monthIncome += income;
-                monthPayDates.push(payDate.toDateString());
+                payDatesForMonth.push(payDate);
             }
         });
 
-        // Calculate total bills for the month
         const sortedBills = sortBillsByDate(bills);
         sortedBills.forEach(bill => {
             let billDueDate = new Date(bill.date);
             while (billDueDate <= endDate) {
                 if (billDueDate >= startDate && billDueDate <= endDate) {
-                    billDueDate = adjustDate(billDueDate); // Ensure the bill date is adjusted
-                    monthBills += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
+                    billsForMonth += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
                     monthTotal += bill.amount;
                 }
                 billDueDate = getNextBillDate(billDueDate, bill.frequency);
@@ -355,10 +347,9 @@ function calculateMonthlyView() {
         });
 
         monthlyData.totals.push(monthTotal);
-        monthlyData.bills.push(monthBills);
+        monthlyData.bills.push(billsForMonth);
         monthlyData.incomes.push(monthIncome);
-        monthlyData.payDates.push(monthPayDates);
-
+        monthlyData.payDates.push(payDatesForMonth);
         currentDate.setMonth(currentDate.getMonth() + 1);
     }
 
@@ -366,48 +357,26 @@ function calculateMonthlyView() {
 }
 
 function getNextBillDate(date, frequency) {
+    let newDate = new Date(date);
     switch (frequency) {
-        case 'weekly': date.setDate(date.getDate() + 7); break;
-        case 'fortnightly': date.setDate(date.getDate() + 14); break;
-        case 'monthly': 
-            let currentDay = date.getDate();
-            date.setMonth(date.getMonth() + 1);
-            if (date.getDate() < currentDay) {
-                date.setDate(0); // This sets the date to the last day of the previous month
+        case 'weekly': newDate.setDate(newDate.getDate() + 7); break;
+        case 'fortnightly': newDate.setDate(newDate.getDate() + 14); break;
+        case 'monthly':
+            newDate.setMonth(newDate.getMonth() + 1);
+            const lastDayOfMonth = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate();
+            if (newDate.getDate() > lastDayOfMonth) {
+                newDate.setDate(lastDayOfMonth);
             }
             break;
-        case 'yearly': date.setFullYear(date.getFullYear() + 1); break;
+        case 'yearly': newDate.setFullYear(newDate.getFullYear() + 1); break;
     }
-    return adjustDate(date);
-}
-
-function adjustDate(date) {
-    const day = date.getDate();
-    const month = date.getMonth();
-    const year = date.getFullYear();
-
-    // Move date to the last valid date of the month if it exceeds the number of days in the month
-    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-
-    if (day > lastDayOfMonth) {
-        date.setDate(lastDayOfMonth);
-    }
-
-    return date;
-}
-
-function loadMorePayCycles() {
-    revealedPayCycles += 3; // Increase the number of revealed cycles
-    updateAccordion();
+    return newDate;
 }
 
 function updateChart(chartData) {
     const ctx = document.getElementById('financialChart').getContext('2d');
-    if (window.financialChart && typeof window.financialChart.destroy === 'function') {
-        window.financialChart.destroy();
-    }
-    window.financialChart = new Chart(ctx, {
-        type: 'bar',
+    const chart = new Chart(ctx, {
+        type: 'line',
         data: {
             labels: chartData.dates,
             datasets: [{
@@ -420,33 +389,19 @@ function updateChart(chartData) {
         },
         options: {
             scales: {
-                x: {
-                    beginAtZero: true,
-                    type: 'category',
-                    labels: chartData.dates,
-                    ticks: { autoSkip: true, maxTicksLimit: 20 },
-                    title: { display: true, text: 'Start Date of Pay Cycle' }
-                },
                 y: {
-                    beginAtZero: true,
-                    title: { display: true, text: 'Total Bills' }
+                    beginAtZero: true
                 }
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
+            }
         }
     });
 }
 
-function resetLocalStorage() {
-    if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
-        localStorage.clear();
-        window.location.href = window.location.href;
-    }
+function loadMorePayCycles() {
+    revealedPayCycles += 3;
+    updateAccordion();
 }
 
-// Modal functions
 function openModal() {
     document.getElementById('billModal').style.display = 'block';
 }
@@ -456,9 +411,6 @@ function closeModal() {
 }
 
 function openIncomeModal() {
-    document.getElementById('editFrequency').value = payFrequency;
-    document.getElementById('editIncome').value = income;
-    document.getElementById('editPayday').value = payday;
     document.getElementById('incomeModal').style.display = 'block';
 }
 
@@ -466,57 +418,21 @@ function closeIncomeModal() {
     document.getElementById('incomeModal').style.display = 'none';
 }
 
-function updateIncome() {
-    payFrequency = document.getElementById('editFrequency').value;
-    income = parseFloat(document.getElementById('editIncome').value);
-    payday = document.getElementById('editPayday').value;
-    saveToLocalStorage();
-
-    // Update the income table without reloading
-    const yearlyIncome = calculateYearlyIncome(payFrequency, income);
-    const formattedPayday = new Date(payday).toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric'
-    });
-    document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
-
-    // Close modal
-    closeIncomeModal();
-    updateAccordion();
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById('billModal')) {
-        closeModal();
-    }
-    if (event.target == document.getElementById('incomeModal')) {
-        closeIncomeModal();
+function resetLocalStorage() {
+    if (confirm("Are you sure you want to reset all data?")) {
+        localStorage.clear();
+        location.reload();
     }
 }
 
-// Dark mode toggle function
 function toggleDarkMode() {
     darkMode = !darkMode;
-    document.body.classList.toggle('dark-mode');
-    document.querySelector('.container').classList.toggle('dark-mode');
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.container').classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+        document.querySelector('.container').classList.remove('dark-mode');
+    }
     saveToLocalStorage();
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (income) {
-        const yearlyIncome = calculateYearlyIncome(payFrequency, income);
-        const formattedPayday = new Date(payday).toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: '2-digit',
-            year: 'numeric'
-        });
-        document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-    }
-    updateBillsTable();
-    updateAccordion();
-});
