@@ -4,7 +4,7 @@ let payFrequency = localStorage.getItem('payFrequency') || '';
 let income = parseFloat(localStorage.getItem('income')) || 0;
 let payday = localStorage.getItem('payday') || '';
 let viewMode = localStorage.getItem('viewMode') || 'payCycle';
-let generatedPayCycles = 12; // Generate 12 months of pay cycles
+let generatedPayCycles = 12; // Initially generate 12 months of pay cycles
 let revealedPayCycles = 3; // Initially reveal 3 pay cycles
 
 // Constants
@@ -389,7 +389,7 @@ function adjustDate(date) {
 }
 
 function loadMorePayCycles() {
-    revealedPayCycles += 3;
+    revealedPayCycles += 3; // Increase the number of revealed cycles
     updateAccordion();
 }
 
