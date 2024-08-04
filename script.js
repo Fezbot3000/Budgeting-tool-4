@@ -338,10 +338,11 @@ function calculateMonthlyView() {
             let billDueDate = new Date(bill.date);
             while (billDueDate <= endDate) {
                 if (billDueDate >= startDate && billDueDate <= endDate) {
+                    billDueDate = adjustDate(billDueDate); // Ensure the bill date is adjusted
                     monthBills += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
                     monthTotal += bill.amount;
                 }
-                billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
+                billDueDate = getNextBillDate(billDueDate, bill.frequency);
             }
         });
 
