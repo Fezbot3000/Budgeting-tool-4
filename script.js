@@ -5,7 +5,7 @@ let income = parseFloat(localStorage.getItem('income')) || 0;
 let payday = localStorage.getItem('payday') || '';
 let viewMode = localStorage.getItem('viewMode') || 'payCycle';
 let darkMode = localStorage.getItem('darkMode') === 'true';
-let generatedPayCycles = 12; // Generate 12 months of pay cycles
+let generatedPayCycles = 12; // Initial number of generated pay cycles
 let revealedPayCycles = 3; // Initially reveal 3 pay cycles
 
 // Constants
@@ -398,6 +398,9 @@ function updateChart(chartData) {
 }
 
 function loadMorePayCycles() {
+    if (revealedPayCycles >= generatedPayCycles) {
+        generatedPayCycles += 3;
+    }
     revealedPayCycles += 3;
     updateAccordion();
 }
