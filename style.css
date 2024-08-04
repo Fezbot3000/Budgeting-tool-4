@@ -177,7 +177,6 @@ th {
     cursor: pointer;
     padding: 12px;
     width: 100%;
-    border: 1px solid #ddd;
     text-align: left;
     outline: none;
     font-size: 16px;
@@ -188,11 +187,11 @@ th {
     margin-bottom: 10px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: auto;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .accordion .leftover {
     margin-left: auto;
-    color: #333;
 }
 
 .accordion .leftover .amount {
@@ -412,4 +411,18 @@ body.dark-mode {
 
 .dark-mode .delete-btn:hover {
     background-color: #fdecea;
+}
+
+/* Additional styling for positive and negative amounts in dark mode */
+.accordion .leftover.positive .amount {
+    color: green;
+}
+
+.accordion .leftover.negative .amount {
+    color: #f44336;
+}
+
+/* Remove border color from accordion */
+.accordion {
+    border: none;
 }
