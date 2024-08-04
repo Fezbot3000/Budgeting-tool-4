@@ -36,7 +36,7 @@ function goToStep2() {
         day: '2-digit',
         year: 'numeric'
     });
-    document.getElementById('incomeTable').innerHTML += `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
+    document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
     saveToLocalStorage();
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             day: '2-digit',
             year: 'numeric'
         });
-        document.getElementById('incomeTable').innerHTML += `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
+        document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
         document.getElementById('step1').classList.add('hidden');
         document.getElementById('step2').classList.remove('hidden');
     }
@@ -447,7 +447,20 @@ function updateIncome() {
     income = parseFloat(document.getElementById('editIncome').value);
     payday = document.getElementById('editPayday').value;
     saveToLocalStorage();
-    location.reload();
+
+    // Update the income table without reloading
+    const yearlyIncome = calculateYearlyIncome(payFrequency, income);
+    const formattedPayday = new Date(payday).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
+        year: 'numeric'
+    });
+    document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
+
+    // Close modal
+    closeIncomeModal();
+    updateAccordion();
 }
 
 window.onclick = function(event) {
@@ -462,7 +475,13 @@ window.onclick = function(event) {
 document.addEventListener('DOMContentLoaded', () => {
     if (income) {
         const yearlyIncome = calculateYearlyIncome(payFrequency, income);
-        document.getElementById('incomeTable').innerHTML += `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${new Date(payday).toLocaleDateString()}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
+        const formattedPayday = new Date(payday).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric'
+        });
+        document.getElementById('incomeTable').innerHTML = `<tr><td>${payFrequency}</td><td class="right-align">$${income.toFixed(2)}</td><td>${formattedPayday}</td><td class="right-align">$${yearlyIncome.toFixed(2)}</td></tr>`;
         document.getElementById('step1').classList.add('hidden');
         document.getElementById('step2').classList.remove('hidden');
     }
