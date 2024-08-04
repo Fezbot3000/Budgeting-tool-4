@@ -393,3 +393,23 @@ body.dark-mode {
     background-color: #333;
     color: #e0e0e0;
 }
+
+/* Dark mode styles for the dropdown and leftover text */
+.dark-mode .view-mode select, .dark-mode .view-mode label {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+.dark-mode .leftover {
+    color: #e0e0e0;
+}
+
+/* Dark mode styles for buttons */
+.dark-mode .delete-btn {
+    background-color: transparent;
+    color: #f44336;
+}
+
+.dark-mode .delete-btn:hover {
+    background-color: #fdecea;
+}
