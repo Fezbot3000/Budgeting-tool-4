@@ -277,7 +277,7 @@ function getBillRowsForCycle(bill, dates) {
             if (billDueDate >= dates.start && billDueDate <= dates.end) {
                 rows += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
             }
-            billDueDate = getNextBillDate(billDueDate, bill.frequency);
+            billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
         }
     }
     return rows;
@@ -294,7 +294,7 @@ function getBillTotalForCycle(bill, dates) {
             if (billDueDate >= dates.start && billDueDate <= dates.end) {
                 total += bill.amount;
             }
-            billDueDate = getNextBillDate(billDueDate, bill.frequency);
+            billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
         }
     }
     return total;
@@ -310,7 +310,7 @@ function calculateMonthlyView() {
     let endViewDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + generatedPayCycles, 0);
     while (date <= endViewDate) {
         payDates.push(new Date(date));
-        date = getNextBillDate(new Date(date), payFrequency);
+        date = adjustDate(getNextBillDate(new Date(date), payFrequency));
     }
 
     for (let i = 0; i < generatedPayCycles; i++) {
@@ -341,7 +341,7 @@ function calculateMonthlyView() {
                     monthBills += `<tr><td>${bill.name}</td><td>${billDueDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' })}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
                     monthTotal += bill.amount;
                 }
-                billDueDate = getNextBillDate(billDueDate, bill.frequency);
+                billDueDate = adjustDate(getNextBillDate(billDueDate, bill.frequency));
             }
         });
 
@@ -369,6 +369,21 @@ function getNextBillDate(date, frequency) {
             break;
         case 'yearly': date.setFullYear(date.getFullYear() + 1); break;
     }
+    return date;
+}
+
+function adjustDate(date) {
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    // Move date to the last valid date of the month if it exceeds the number of days in the month
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+
+    if (day > lastDayOfMonth) {
+        date.setDate(lastDayOfMonth);
+    }
+
     return date;
 }
 
