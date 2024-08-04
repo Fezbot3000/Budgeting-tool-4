@@ -95,7 +95,7 @@ document.getElementById('billsForm').addEventListener('submit', function(event) 
     if (billIndex === '') {
         bills.push({ name: billName, amount: billAmount, frequency: billFrequency, date: billDate });
     } else {
-        bills[billIndex] = { name: billName, amount: billAmount, frequency: billFrequency, date: billDate };
+        bills[billIndex] = { name: billName, amount: billAmount, frequency: billFrequency, date: billDate });
     }
 
     saveToLocalStorage();
@@ -369,7 +369,7 @@ function getNextBillDate(date, frequency) {
             break;
         case 'yearly': date.setFullYear(date.getFullYear() + 1); break;
     }
-    return date;
+    return adjustDate(date);
 }
 
 function adjustDate(date) {
