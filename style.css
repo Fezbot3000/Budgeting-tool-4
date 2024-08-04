@@ -1,4 +1,4 @@
- /* General Styles */
+/* General Styles */
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -151,12 +151,14 @@ table {
     margin-bottom: 20px;
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 th, td {
     border: 1px solid #ddd;
     padding: 12px;
     text-align: left;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 th {
@@ -254,6 +256,7 @@ th {
     max-width: 500px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .modal-content .close {
@@ -375,4 +378,18 @@ body.dark-mode {
 
 .dark-mode .reset-btn:hover, .dark-mode .dark-mode-btn:hover {
     background-color: #0056b3;
+}
+
+.dark-mode table {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode th, .dark-mode td {
+    border-color: #333;
+}
+
+.dark-mode .modal-content {
+    background-color: #333;
+    color: #e0e0e0;
 }
