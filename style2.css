@@ -81,9 +81,7 @@ span.price-data {
     max-width: 100%;
 }
 
-.chart-container-new {
-    display: flex;
-}
+ 
 .chart-container-new canvas {
     position: relative;
 }
@@ -139,10 +137,7 @@ ul.menucs span {
 span.menu-img {
     height: 30px;
 }
-.main-container {
-    display: block;
-    margin-top: 80px;
-}
+ 
 .form-inner select {
     width: 60%;
     color: #000;
@@ -198,6 +193,7 @@ span.price {
 }
 .table-container table {
     border: 1px dashed #EBDA814D !important;
+    border-radius: 7px;
 }
 .box {
     border: 1px dashed #EBDA814D;
@@ -330,11 +326,7 @@ ul.menucs span {
 span.menu-img {
     height: 30px;
 }
-.main-container {
-    display: block;
-    margin-top: 80px;
-}
-
+ 
 
 button.add-bill {
     font-family: Open Sans;
@@ -378,6 +370,7 @@ span.price {
 }
 .table-container table {
     border: 1px dashed #EBDA814D !important;
+    border-radius: 7px !important;
 }
 .box {
     border: 1px dashed #EBDA814D;
@@ -511,10 +504,7 @@ ul.menucs span {
 span.menu-img {
     height: 30px;
 }
-.main-container {
-    display: block;
-    margin-top: 80px;
-}
+ 
 .settings-menu {
     border: 1px dashed #EBDA814D;
     border-radius: 10px;
@@ -597,12 +587,12 @@ button.btn.btn-outline {
 button.btn {
     color: #000;
     font-family: Open Sans;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
     line-height: 21.79px;
     text-align: center;
     border-radius: 8px;
-    width: 112px;
+    width: 100px;
 }
 .box1.bhead {
     display: flex;
@@ -712,7 +702,7 @@ a.menu-act span {
     color: #2FA6FF;
 }
 .main-container {
-    max-height: 70vh;
+    max-height: 84vh;
     overflow: auto;
 }
 
@@ -766,7 +756,7 @@ button.secondary-btn {
 button.accordion-btn {
     background: transparent;
     border-radius: 8px;
-    border: 1px dashed #EBDA814D;
+ 
     border-bottom: none;
     margin: 0;
     border-bottom-left-radius: 0;
@@ -778,7 +768,7 @@ button.accordion-btn {
 }
 
 .panel-content {
-    border: 1px dashed #EBDA814D;
+   
     border-top: 0;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -828,4 +818,70 @@ button#submitOneOffIncome {
 }
 div#manageTagsModal button.primary-btn {
     color: #fff;
+}
+div#incomeModal h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.table-container tr {
+    background: unset !important;
+}
+ 
+::-webkit-scrollbar {
+    width: 4px; 
+    height: 4px;  
+}
+ 
+::-webkit-scrollbar-track {
+    background: #19191996;  
+    border-radius: 10px; 
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #383838;  
+    border-radius: 10px;  
+}
+ 
+::-webkit-scrollbar-thumb:hover {
+    background: #555;  
+}
+
+.bottom-step {
+    width: 100%;
+    display: block;
+    position: absolute;
+    bottom: 70px;
+    text-align: center;
+    left: 0;
+}
+.bottom-step a {
+    background: #000;
+    color: #fff;
+    padding: 13px 20px;
+    border-radius: 8px;
+}
+
+.bottom-step span {
+    color: #fff !important;
+}
+
+
+.bottom-step span.menu-icon {
+    width: auto;
+    position: relative;
+    top: 4px;
+}
+
+.bottom-step .menu-txt {
+    padding-left: 10px;
+}
+table#billtbl {
+    margin: 0;
+}
+
+.billsx {
+    margin-bottom: 20px;
+}
+table {
+    margin: 0;
 }

@@ -17,7 +17,17 @@ body {
 h1, h2, h3, h4, h5, h6, p, a, button, input, select, label, th, td, .accordion-btn, .modal-content, .bill-summary-header, .panel-content, .table-container, .right-align, .left-align, .cycle-summary, .income-summary, .reset-btn, .dark-mode-btn, .edit-income, .controls {
     text-transform: none; /* Disable text-transform for these elements */
 }
-
+a.addbill {
+    background: white;
+    color: black;
+    border-radius: 13px;
+    display: block;
+    text-align: center;
+    padding: 13px;
+    text-decoration: none;
+    margin: 33px 0;
+    font-weight: 500;
+}
 .cycle-summary {
     padding-top: 15px;
 }
@@ -1008,3 +1018,75 @@ input[type="checkbox"] {
       font-size: 80px;
       bottom: 0;
   }
+  
+  .billsx {
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px dashed #EBDA814D;
+}
+
+.bills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+ 
+    text-transform: capitalize;
+    font-size: 12px;
+}
+
+.bills-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.positive {
+    color: #46e09d;
+}
+
+.negative {
+    color: #fe6362;
+}
+.bill-name {
+    text-align: left;
+    padding: 10px 0;
+    color: white;
+    font-size: 12px;
+}
+
+.bill-date {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    padding: 10px 0;
+}
+
+.bill-amount {
+    text-align: right;
+    font-weight: bold;
+    padding: 10px 0;
+}
+button.hide-button {
+    background: transparent;
+}
+.bills-table  tr  {
+    background:none;
+ 
+} 
+.rwrt {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    margin-top: -37px;
+}
+img#cavnav {
+    position: absolute;
+    top: 14rem;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-48deg);
+    width: 38px;
+}
+.chart-container-new {
+    position: relative;
+}
+.mxc {
+    border: 1px dashed #EBDA814D;
+    border-radius: 8px;
+}

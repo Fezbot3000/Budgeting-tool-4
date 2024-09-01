@@ -10,6 +10,7 @@ let revealedPayCycles = 12; // Initially reveal 12 pay cycles instead of 3
 let tags = JSON.parse(localStorage.getItem('tags')) || ['default'];
 let oneOffIncomes = JSON.parse(localStorage.getItem('oneOffIncomes')) || []; // Load one-off incomes
 
+
 // Load saved sortOrder from localStorage or use default values
 let sortOrder;
 try {
@@ -112,6 +113,8 @@ function updateIncomeTable(payFrequency, income) {
     var savingsper = (potentialSavings/totalYearlyIncome)*100;
     savingsper = savingsper.toFixed(2);
     update_ct_data(billsper,savingsper);
+    document.getElementById('bills_dt').textContent = billsper;
+        document.getElementById('savings_dt').textContent = savingsper;
 }
 
 function update_ct_data(bills,savings) {
@@ -146,7 +149,7 @@ function update_ct_data(bills,savings) {
             rotation: 270,
         },
         };
-
+        
         const myChart = new Chart(
         document.getElementById('myChart'),
         config
@@ -274,6 +277,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (myElem3 !== null)
     {
         updateAccordion();
+    }
+    if(income=='')
+    {
+        openIncomeModal();
+    }
+
+    var el2 = document.getElementById('billtbl');
+    if (el2 !== null)
+    {
+        updateBillsTable2();
     }
     
 });
@@ -527,6 +540,50 @@ function updateBillDueDatesForDisplay() {
         displayBill.displayDate = billDueDate.toISOString().split('T')[0];
         return displayBill;
     });
+}
+
+function updateBillsTable2() {
+    const billsTable = document.getElementById('billtbl');
+    let totalYearlyAmount = 0;
+
+    const adjustedBills = updateBillDueDatesForDisplay();
+
+    const sortedBills = adjustedBills;
+
+    // Subtract bill amounts (as they are expenses)
+    sortedBills.forEach((bill, index) => {
+        const yearlyAmount = calculateYearlyAmount(bill.amount, bill.frequency);
+        totalYearlyAmount -= yearlyAmount; // Subtract the yearly bill amounts
+        var valA = new Date(bill.displayDate);
+        var b = valA.getDate();
+        billsTable.querySelector('tbody').innerHTML += `<tr>
+            <td class="bill-name">${bill.name}</td>
+            <td class="bill-date" data-date="${bill.displayDate}">${b}${formatDaySuffix(b)}</td>
+            <td class="bill-amount negative">-$${yearlyAmount.toFixed(2)}</td>
+        </tr>`;
+    });
+
+    // // Add one-off incomes (as they are income)
+    // oneOffIncomes.forEach((income, index) => {
+    //     totalYearlyAmount += income.amount; // Add the income amounts
+
+    //     billsTable.querySelector('tbody').innerHTML += `<tr>
+    //         <td>${income.name}</td>
+    //         <td class="positive right-align"><span class="price-data price-success">+$${income.amount.toFixed(2)}</span></td>
+    //         <td>One-Off</td>
+    //         <td data-date="${income.date}">${formatDate(income.date)}</td>
+    //         <td>One-Off</td>
+    //         <td class="right-align"><span class="price-data price-success">+$${income.amount.toFixed(2)}</span></td>
+    //         <td>
+    //             <button class="secondary-btn" onclick="editOneOffIncome(${index})">Edit</button>
+    //             <button class="delete-btn" onclick="removeOneOffIncome(${index})">Delete</button>
+    //         </td>
+    //     </tr>`;
+    // });
+
+    // // Display the correct total at the bottom
+    // const totalRow = `<tr><td colspan="5" class="total-label">Total Yearly Amount:</td><td class="right-align total-amount"><span class="price-data price-danger">${totalYearlyAmount < 0 ? '-' : ''}$${Math.abs(totalYearlyAmount).toFixed(2)}</span></td><td></td></tr>`;
+    // billsTable.querySelector('tbody').insertAdjacentHTML('beforeend', totalRow);
 }
 
 function updateBillsTable() {
@@ -1313,6 +1370,7 @@ function updatePayCycleAccordion(chartData) {
          </div>
   
       </div>
+         <div class="mxc">
       <button class="accordion-btn" data-index="${index}">
         <span>Bills list</span>
         <span class="toggle-text">${toggleText}</span>
@@ -1321,6 +1379,7 @@ function updatePayCycleAccordion(chartData) {
         <table>
           ${cycleBills}
         </table>
+      </div>
       </div>
     </div>
     `;
@@ -1419,6 +1478,7 @@ function updateMonthlyAccordion(chartData) {
                 </div>
                
             </div>
+             <div class="mxc">
             <button class="accordion-btn" data-index="${index}">
                 <span>Bills list</span>
                 <span class="toggle-text">${toggleText}</span>
@@ -1427,6 +1487,7 @@ function updateMonthlyAccordion(chartData) {
                 <table>
                     ${billsForMonth}
                 </table>
+            </div>
             </div>
         </div>
         `;
@@ -1789,7 +1850,7 @@ function filterByTag() {
         totalYearlyAmount += yearlyAmount;
         billsTable.querySelector('tbody').innerHTML += `<tr>
             <td>${bill.name}</td>
-            <td class="bills negative right-align"><span class="price-data price-danger">-$${bill.amount.toFixed(2)}</span></td>
+            <td  class="bills negative right-align"><span class="price-data price-danger">-$${bill.amount.toFixed(2)}</span></td>
             <td>${bill.frequency}</td>
             <td>${formatDate(bill.date)}</td>
             <td>${bill.tag}</td>
@@ -1874,3 +1935,12 @@ function capitalizeFirstLetterOfSentences() {
 
 
 // document.getElementById('billTag').addEventListener('input', autocompleteTag);
+
+
+jQuery(document).ready(function($) {
+    $('.hide-button').click(function() {
+        $('.bills-table').toggle();
+        var buttonText = $('.bills-table').is(':visible') ? 'Hide' : 'Show';
+        $(this).text(buttonText);
+    });
+});
