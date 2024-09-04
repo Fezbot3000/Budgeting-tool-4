@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgeting Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style2.css">
+    
+    <!-- Required meta tags for iOS web app -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Icons for the web app -->
+    <link rel="apple-touch-icon" href="path/to/your-icon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="path/to/your-icon.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="path/to/your-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="path/to/your-icon.png">
+  
+</head>
+<body>
+    <div class="container">
+   
+     <div class="main-container">
+        <div class="cycle-header">
+            <div class="left-content">
+                <div class="tab-menu">
+                    <ul>
+                        <li><a data-icon="img/dolla-basic.png" data-active="img/dolla.png" data-target="cycle-body" class="link-act" href="#"><img src="img/dolla.png"></a></li>
+                        <li><a data-icon="img/month-view.png" data-active="img/month-active.png" data-target="month-body" href="#"><img src="img/month-view.png"></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right-content">
+                <button class="btn btn-outline income-opn">Add income</button>
+                <button class="btn bill-opn">Add a bill</button>
+            </div>
+        </div>
+        <div class="chart-box">
+            <div class="chart-container">
+                <canvas id="financialChart"></canvas>
+            </div>
+        </div>
+        <div id="accordionContainer">
+        <div class="cycle-body tab-body">
+           
+        </div>
+        
+        <div class="month-body tab-body">
+           
+            </div>
+        </div>
+     </div>
+    </div>
+
+    <div id="billModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form id="billsForm">
+                <input type="hidden" id="billIndex" name="billIndex">
+                <div class="form-group">
+                    <label for="billName">Bill Name:</label>
+                    <input type="text" id="billName" name="billName" required>
+                </div>
+                <div class="form-group">
+                    <label for="billAmount">Bill Amount:</label>
+                    <input type="number" step="0.01" id="billAmount" name="billAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="billFrequency">Bill Frequency:</label>
+                    <select id="billFrequency" name="billFrequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="fortnightly">Fortnightly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="one-off">One-off</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="billDate">Next Due Date:</label>
+                    <input type="date" id="billDate" name="billDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="billTag">Tag:</label>
+                    <input type="text" id="billTag" name="billTag" list="tagList">
+                    <datalist id="tagList"></datalist>
+                </div>
+                <div class="modal-footer">
+                <a class="go-back" href="#"><img src="img/bck.png"/>Go back</a>
+                <button type="submit" id="submitBill" class="primary-btn">Add a Bill</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="oneOffIncomeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeOneOffIncomeModal()">&times;</span>
+            <form id="oneOffIncomeForm">
+                <input type="hidden" id="incomeIndex" name="incomeIndex">
+                <div class="form-group">
+                    <label for="incomeName">Income Name:</label>
+                    <input type="text" id="incomeName" name="incomeName" required>
+                </div>
+                <div class="form-group">
+                    <label for="oneOffIncomeAmount">Income Amount:</label>
+                    <input type="number" step="0.01" id="oneOffIncomeAmount" name="incomeAmount" required> <!-- Corrected ID -->
+                </div>
+                <div class="form-group">
+                    <label for="incomeDate">Date Received:</label>
+                    <input type="date" id="incomeDate" name="incomeDate" required>
+                </div>
+                <div class="modal-footer">
+                    <a class="go-back" href="#"><img src="img/bck.png"/>Go back</a>
+                    <button type="submit" id="submitOneOffIncome" class="primary-btn">Add Income</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Income Modal Structure -->
+    <div id="incomeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeIncomeModal()">&times;</span>
+            <form id="incomeEditForm">
+                <div class="form-group">
+                    <label for="editFrequency">How often do you get paid?</label>
+                    <select id="editFrequency" name="editFrequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="fortnightly">Fortnightly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editIncome">How much do you get paid in that period?</label>
+                    <input type="number" step="0.01" id="editIncome" name="editIncome" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPayday">When is your next pay day?</label>
+                    <input type="date" id="editPayday" name="editPayday" required>
+                </div>
+                <div class="modal-footer">
+                    <a class="go-back" href="#"><img src="img/bck.png"/>Go back</a>
+                    <button type="button" class="primary-btn" onclick="updateIncome()">Save</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+
+    <div class="bottom-menu-bar">
+        <div class="bottom-menu-inner">
+            <ul class="menucs">
+                <li><a href="index.html">
+                    <span class="menu-img"><img src="img/fhom.png"/></span>
+                    <span class="menu-txt">Home</span>
+                </a></li>
+                <li><a href="pay-cycle.html" class="menu-act">
+                    <span class="menu-img"><img src="img/dlact.png"/></span>
+                    <span class="menu-txt">Pay Cycle</span> 
+                </a></li>
+                <li><a href="bills.html">
+                    <span class="menu-img"><img src="img/billicnm.svg"/></span>
+                    <span class="menu-txt">Bills list</span>
+                </a></li>
+                <li><a href="settings.html">
+                    <span class="menu-img"><img src="img/cog.svg"/></span>
+                    <span class="menu-txt">Settings</span>
+                </a></li>
+            </ul>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        $('.tab-menu a').click(function(){
+            var ths = $(this);
+            var actv = $(ths).data('active');
+            var trg = $(ths).data('target');
+            $('.tab-menu a').each(function(){
+                $(this).removeClass('link-act');
+                var icn = $(this).data('icon');
+                $(this).find('img').attr('src',icn);
+            });
+            // $('.tab-menu a').removeClass('link-act');
+            $(ths).addClass('link-act');
+            $('.tab-body').hide();
+            $('.'+trg).show();
+            $(ths).find('img').attr('src',actv);
+            var vmode = '';
+            if(trg=='month-body')
+            {
+                vmode = 'monthly';
+            }
+            else
+            {
+                vmode = 'payCycle';
+            }
+            toggleViewMode(vmode);
+            return false;
+        });
+        $('button.btn.bill-opn').click(function(){
+            $('#billModal').show();
+            return false;
+        });
+        $('a.go-back').click(function(){
+            $(this).parent().parent().parent().parent().hide();
+            return false;
+        });
+        $('button.btn.btn-outline.income-opn').click(function(){
+            $('#oneOffIncomeModal').show();
+            return false
+        });
+        $(document).ready(function(){
+            let viewMode = localStorage.getItem('viewMode') || 'payCycle';
+            $('.tab-menu a').each(function(){
+                $(this).removeClass('link-act');
+                var icn = $(this).data('icon');
+                $(this).find('img').attr('src',icn);
+            });
+            if(viewMode=='payCycle')
+            {
+                $('.tab-menu a[data-target="cycle-body"]').trigger('click');
+            }
+            else
+            {
+                $('.tab-menu a[data-target="month-body"]').trigger('click');
+            }
+        });
+    </script>
+</body>
+</html>
