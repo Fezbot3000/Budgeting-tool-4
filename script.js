@@ -239,6 +239,7 @@ function toggleViewMode(mode) {
             chartData.billsData.push(cycleTotal);
             chartData.incomeData.push(cycleIncome);
         });
+        updateChart(chartData);
 
         
     } else if (viewMode === 'monthly') {
@@ -252,8 +253,9 @@ function toggleViewMode(mode) {
                 incomes: chartData.incomes.slice(0, revealedPayCycles),
                 leftovers: chartData.leftovers.slice(0, revealedPayCycles)
             };
-            
+            updateChart(limitedChartData);
         }
+        
     }
 
 }
@@ -455,48 +457,49 @@ function closeOneOffIncomeModal() {
     document.getElementById('oneOffIncomeModal').style.display = 'none';
 }
 
-/*
-document.getElementById('oneOffIncomeForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+var myElem222 = document.getElementById('oneOffIncomeForm');
+    if (myElem222 !== null)
+    {
+        document.getElementById('oneOffIncomeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    const incomeIndex = document.getElementById('incomeIndex').value;
-    const incomeName = document.getElementById('incomeName').value;
-    const incomeAmountInput = document.getElementById('oneOffIncomeAmount');  // Use the original ID
+            const incomeIndex = document.getElementById('incomeIndex').value;
+            const incomeName = document.getElementById('incomeName').value;
+            const incomeAmountInput = document.getElementById('oneOffIncomeAmount');  // Use the original ID
 
-    if (!incomeAmountInput) {
-        return;
+            if (!incomeAmountInput) {
+                return;
+            }
+
+            let incomeAmountRaw = incomeAmountInput.value.trim();
+
+            if (incomeAmountRaw === "" || incomeAmountRaw === null) {
+                alert("Income amount cannot be empty.");
+                return;
+            }
+
+            let incomeAmount = parseFloat(incomeAmountRaw.replace(/,/g, ''));
+
+            if (isNaN(incomeAmount) || incomeAmount <= 0) {
+                alert("Please enter a valid positive income amount.");
+                return;
+            }
+
+            const incomeDate = document.getElementById('incomeDate').value;
+            const newIncome = { name: incomeName, amount: incomeAmount, date: incomeDate };
+            
+            if (incomeIndex === '') {
+                oneOffIncomes.push(newIncome);
+            } else {
+                oneOffIncomes[incomeIndex] = newIncome;
+            }
+
+            saveOneOffIncomesToLocalStorage();
+            location.reload();
+        
+            
+        }); 
     }
-
-    let incomeAmountRaw = incomeAmountInput.value.trim();
-
-    if (incomeAmountRaw === "" || incomeAmountRaw === null) {
-        alert("Income amount cannot be empty.");
-        return;
-    }
-
-    let incomeAmount = parseFloat(incomeAmountRaw.replace(/,/g, ''));
-
-    if (isNaN(incomeAmount) || incomeAmount <= 0) {
-        alert("Please enter a valid positive income amount.");
-        return;
-    }
-
-    const incomeDate = document.getElementById('incomeDate').value;
-    const newIncome = { name: incomeName, amount: incomeAmount, date: incomeDate };
-    
-    if (incomeIndex === '') {
-        oneOffIncomes.push(newIncome);
-    } else {
-        oneOffIncomes[incomeIndex] = newIncome;
-    }
-
-    saveOneOffIncomesToLocalStorage();
-    updateIncomeTableWithOneOffIncomes();
-    closeOneOffIncomeModal();
-    resetIncomeForm();
-  
-    
-}); */
 
 function resetIncomeForm() {
     document.getElementById('incomeIndex').value = '';
@@ -538,7 +541,7 @@ function updateBillDueDatesForDisplay() {
         let billDueDate = new Date(displayBill.date);
 
         // Adjust the date forward if it's in the past
-        while (billDueDate < today) {
+        if (billDueDate < today) {
             billDueDate = getNextBillDate(billDueDate, displayBill.frequency);
         }
 
@@ -842,8 +845,44 @@ function updateAccordion() {
 
     if (viewMode === 'payCycle') {
         updatePayCycleAccordion(chartData);
+        const cycleDates = getCycleDates(new Date(payday), getCycleLength(payFrequency), generatedPayCycles);
+
+        cycleDates.forEach((dates, index) => {
+            if (index >= revealedPayCycles) return;
+
+            let cycleTotal = 0;
+            let cycleIncome = income;
+
+            const sortedBills = sortBillsByDate(bills);
+            sortedBills.forEach(bill => {
+                cycleTotal += getBillTotalForCycle(bill, dates);
+            });
+
+            oneOffIncomes.forEach(incomeItem => {
+                const incomeDate = new Date(incomeItem.date);
+                if (incomeDate >= dates.start && incomeDate <= dates.end) {
+                    cycleIncome += incomeItem.amount; 
+                }
+            });
+
+            const formattedStartDate = formatDate(dates.start);
+            chartData.dates.push(formattedStartDate);
+            chartData.billsData.push(cycleTotal);
+            chartData.incomeData.push(cycleIncome);
+        });
+
+        updateChart(chartData);
     } else if (viewMode === 'monthly') {
         updateMonthlyAccordion(chartData);
+        chartData = calculateMonthlyView();
+        const limitedChartData = {
+            dates: chartData.dates.slice(0, revealedPayCycles),
+            totals: chartData.totals.slice(0, revealedPayCycles),
+            bills: chartData.bills.slice(0, revealedPayCycles),
+            incomes: chartData.incomes.slice(0, revealedPayCycles),
+            leftovers: chartData.leftovers.slice(0, revealedPayCycles)
+        };
+        updateChart(limitedChartData); 
     }
 
     // Event listeners for accordion buttons
@@ -869,6 +908,19 @@ function updateAccordion2() {
     let chartData = { dates: [], billsData: [], incomeData: [] };
     
     updatePayCycleAccordion2(chartData);
+
+    document.querySelectorAll('.accordion-btn').forEach(button => {
+        const index = button.getAttribute('data-index');
+        button.addEventListener('click', function () {
+            const panel = this.nextElementSibling;
+            const isOpen = panel.style.display === 'block';
+
+            panel.style.display = isOpen ? 'none' : 'block';
+            this.querySelector('.toggle-text').textContent = isOpen ? 'Hide' : 'Show';
+
+            localStorage.setItem(`panel-open-${index}`, !isOpen);
+        });
+    });
 }
 
 // Helper function to add the correct suffix to the date
@@ -1351,7 +1403,7 @@ function updatePayCycleAccordion(chartData) {
       <div class="income-summary">
         <div class="box1">
             <div class="img-container">
-                <img src="img/Vector (1).png">
+                <img src="img/bill.svg">
             </div>
             <div class="title-container">
                 <h3>Income</h3>
@@ -1360,9 +1412,9 @@ function updatePayCycleAccordion(chartData) {
                 <span class="price-data">$${cycleIncome.toFixed(2)}</span>
             </div>
          </div>
-         <div class="box1">
+         <div class="box2">
             <div class="img-container">
-                <img src="img/Vector (2).png">
+                <img src="img/bills.svg">
             </div>
             <div class="title-container">
                 <h3>Estimated bills to pay</h3>
@@ -1371,9 +1423,9 @@ function updatePayCycleAccordion(chartData) {
                 <span class="price-data negative">-$${cycleTotal.toFixed(2)}</span>
             </div>
          </div>
-         <div class="box1">
+         <div class="box3">
             <div class="img-container">
-                <img src="img/Vector (3).png">
+                <img src="img/savings.svg">
             </div>
             <div class="title-container">
                 <h3>Leftover</h3>
@@ -1430,6 +1482,10 @@ function updatePayCycleAccordion2(chartData) {
       let cycleBills = '';
   
       const sortedBills = sortBillsByDate(bills);
+      if(sortedBills.length>0)
+      {
+        document.querySelector('.addbill').style.display = 'none';
+      }
       sortedBills.forEach(bill => {
         let billDueDate = adjustDate(new Date(bill.date));
    
@@ -1493,7 +1549,7 @@ function updatePayCycleAccordion2(chartData) {
         <div class="income-summary">
           <div class="box1">
               <div class="img-container">
-                  <img src="img/Vector (1).png">
+                  <img src="img/bill.svg">
               </div>
               <div class="title-container">
                   <h3>Income</h3>
@@ -1502,9 +1558,9 @@ function updatePayCycleAccordion2(chartData) {
                   <span class="price-data">$${cycleIncome.toFixed(2)}</span>
               </div>
            </div>
-           <div class="box1">
+           <div class="box2">
               <div class="img-container">
-                  <img src="img/Vector (2).png">
+                  <img src="img/bills.svg">
               </div>
               <div class="title-container">
                   <h3>Estimated bills to pay</h3>
@@ -1513,9 +1569,9 @@ function updatePayCycleAccordion2(chartData) {
                   <span class="price-data negative">-$${cycleTotal.toFixed(2)}</span>
               </div>
            </div>
-           <div class="box1">
+           <div class="box3">
               <div class="img-container">
-                  <img src="img/Vector (3).png">
+                  <img src="img/savings.svg">
               </div>
               <div class="title-container">
                   <h3>Leftover</h3>
@@ -1603,7 +1659,7 @@ function updateMonthlyAccordion(chartData) {
             <div class="income-summary">
                 <div class="box1">
                     <div class="img-container">
-                        <img src="img/Vector (1).png">
+                        <img src="img/bill.svg">
                     </div>
                     <div class="title-container">
                         <h3>Income</h3>
@@ -1612,20 +1668,20 @@ function updateMonthlyAccordion(chartData) {
                         <span class="price-data">$${monthIncome.toFixed(2)}</span>
                     </div>
                 </div>
-                <div class="box1">
+                <div class="box2">
                     <div class="img-container">
-                        <img src="img/Vector (2).png">
+                        <img src="img/bills.svg">
                     </div>
                     <div class="title-container">
                         <h3>Estimated bills to pay</h3>
                     </div>
                     <div class="cycle">
-                        <span class="price-data">-$${monthTotal.toFixed(2)}</span>
+                        <span class="price-data negative">-$${monthTotal.toFixed(2)}</span>
                     </div>
                 </div>
-                <div class="box1">
+                <div class="box3">
                     <div class="img-container">
-                        <img src="img/Vector (3).png">
+                        <img src="img/savings.svg">
                     </div>
                     <div class="title-container">
                         <h3>Leftover</h3>
@@ -1688,9 +1744,9 @@ function updateChart(chartData) {
 
     // Loop through each income-summary and extract data
     incomeSummaries.forEach(summary => {
-        const income = parseFloat(summary.querySelector('p:nth-child(1) span').textContent.replace(/[^0-9.-]+/g, ""));
-        const estimatedToPay = parseFloat(summary.querySelector('p:nth-child(2) span').textContent.replace(/[^0-9.-]+/g, ""));
-        const leftover = parseFloat(summary.querySelector('p:nth-child(3) span').textContent.replace(/[^0-9.-]+/g, ""));
+        const income = parseFloat(summary.querySelector('.box1 span').textContent.replace(/[^0-9.-]+/g, ""));
+        const estimatedToPay = parseFloat(summary.querySelector('.box2 span').textContent.replace(/[^0-9.-]+/g, ""));
+        const leftover = parseFloat(summary.querySelector('.box3 span').textContent.replace(/[^0-9.-]+/g, ""));
 
         incomeData.push(income);
         estimatedToPayData.push(estimatedToPay);
@@ -2054,7 +2110,7 @@ function importData(event) {
             oneOffIncomes = data.oneOffIncomes || [];
 
             saveToLocalStorage();
-            location.reload();
+            location.href = "index.html";
         };
         reader.readAsText(file);
     }

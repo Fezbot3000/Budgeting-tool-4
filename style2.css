@@ -378,7 +378,7 @@ span.price {
     padding: 20px;
     border-radius: 7px;
 }
-.box1 {
+.box1, .box2, .box3 {
     display: flex;
     
     flex-direction: row;
@@ -404,7 +404,7 @@ h2,h3 {
     margin: 0;
 }
 
-.box1 h3 {
+.box1 h3,.box2 h3,.box3 h3 {
     font-family: Open Sans;
     font-size: 13px;
     font-weight: 600;
@@ -885,4 +885,8 @@ table#billtbl {
 }
 table {
     margin: 0;
+}
+canvas#financialChart {
+    position: relative;
+    min-height: 500px;
 }
