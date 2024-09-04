@@ -288,6 +288,12 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         updateBillsTable2();
     }
+
+    var myElem5 = document.getElementById('accordionContainer2');
+    if (myElem5 !== null)
+    {
+        updateAccordion2();
+    }
     
 });
 // document.getElementById('viewMode').addEventListener('change', toggleViewMode);
@@ -393,40 +399,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
  */
-/*
-document.getElementById('billsForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const billIndex = document.getElementById('billIndex').value,
-        billName = document.getElementById('billName').value,
-        billAmount = parseFloat(document.getElementById('billAmount').value),
-        billFrequency = document.getElementById('billFrequency').value,
-        billDate = document.getElementById('billDate').value,
-        billTag = document.getElementById('billTag').value.trim();
+var myElem22 = document.getElementById('billsForm');
+    if (myElem22 !== null)
+    {
+        document.getElementById('billsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const billIndex = document.getElementById('billIndex').value,
+                billName = document.getElementById('billName').value,
+                billAmount = parseFloat(document.getElementById('billAmount').value),
+                billFrequency = document.getElementById('billFrequency').value,
+                billDate = document.getElementById('billDate').value,
+                billTag = document.getElementById('billTag').value.trim();
 
-    if (isNaN(billAmount) || billAmount <= 0) {
-        alert("Please enter a valid positive bill amount.");
-        return;
+            if (isNaN(billAmount) || billAmount <= 0) {
+                alert("Please enter a valid positive bill amount.");
+                return;
+            }
+
+            if (!tags.includes(billTag)) {
+                tags.push(billTag); // Add new tag to tags array
+            }
+
+            const newBill = { name: billName, amount: billAmount, frequency: billFrequency, date: billDate, tag: billTag };
+
+            if (billIndex === '') {
+                bills.push(newBill);
+            } else {
+                bills[billIndex] = newBill;
+            }
+
+            saveToLocalStorage();
+            location.reload();
+        });
     }
-
-    if (!tags.includes(billTag)) {
-        tags.push(billTag); // Add new tag to tags array
-    }
-
-    const newBill = { name: billName, amount: billAmount, frequency: billFrequency, date: billDate, tag: billTag };
-
-    if (billIndex === '') {
-        bills.push(newBill);
-    } else {
-        bills[billIndex] = newBill;
-    }
-
-    saveToLocalStorage();
-    updateBillsTable();
-    updateAccordion();
-    resetBillForm();
-    closeModal();
-});
-*/
 
 // One-Off Income Functions
 function saveOneOffIncomesToLocalStorage() {
@@ -855,6 +860,15 @@ function updateAccordion() {
         });
     });
 
+}
+
+function updateAccordion2() {
+    const accordionContainer = document.getElementById('accordionContainer2');
+    accordionContainer.innerHTML = ''; 
+
+    let chartData = { dates: [], billsData: [], incomeData: [] };
+    
+    updatePayCycleAccordion2(chartData);
 }
 
 // Helper function to add the correct suffix to the date
@@ -1354,7 +1368,7 @@ function updatePayCycleAccordion(chartData) {
                 <h3>Estimated bills to pay</h3>
             </div>
             <div class="cycle">
-                <span class="price-data">-$${cycleTotal.toFixed(2)}</span>
+                <span class="price-data negative">-$${cycleTotal.toFixed(2)}</span>
             </div>
          </div>
          <div class="box1">
@@ -1401,6 +1415,150 @@ function updatePayCycleAccordion(chartData) {
         });
   });
 }
+
+function updatePayCycleAccordion2(chartData) {
+    const accordionContainer = document.getElementById('accordionContainer2');
+    const cycleDates = getCycleDates(new Date(payday), getCycleLength(payFrequency), generatedPayCycles);
+  
+    cycleDates.forEach((dates, index) => {
+      if (index >= revealedPayCycles) return;
+        
+      if(index==0)
+      {
+        let cycleTotal = 0;
+      let cycleIncome = income;
+      let cycleBills = '';
+  
+      const sortedBills = sortBillsByDate(bills);
+      sortedBills.forEach(bill => {
+        let billDueDate = adjustDate(new Date(bill.date));
+   
+        if (bill.frequency === 'yearly' || bill.frequency === 'one-off') {
+       
+          if (billDueDate >= dates.start && billDueDate <= dates.end) {
+            cycleBills += `<tr><td>${bill.name}</td><td data-date="${bill.date}">${formatDateWithLineBreak(billDueDate)}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
+            cycleTotal += bill.amount; 
+          }
+        } else {
+          
+          let iterationCount = 0; 
+          while (billDueDate <= dates.end && iterationCount < 100) { 
+             
+            if (billDueDate >= dates.start && billDueDate <= dates.end) {
+              
+              cycleBills += `<tr><td>${bill.name}</td><td data-date="${bill.date}">${formatDateWithLineBreak(billDueDate)}</td><td class="bills negative right-align">-$${bill.amount.toFixed(2)}</td></tr>`;
+              cycleTotal += bill.amount;
+            }
+            
+            billDueDate = getNextBillDate(billDueDate, bill.frequency);
+         
+    
+            billDueDate = adjustDate(billDueDate);
+            iterationCount++;
+          }
+          if (iterationCount >= 100) {
+            console.warn(`Potential infinite loop detected for bill: ${bill.name}`);
+          }
+        }
+      });
+  
+      // Reset the processed incomes at the start of each cycle to avoid duplicates
+      let processedIncomes = new Set();
+  
+      oneOffIncomes.forEach(incomeItem => {
+        const incomeDate = new Date(incomeItem.date);
+        const incomeKey = `${incomeItem.name}-${incomeDate.toISOString()}`;
+  
+        if (incomeDate >= dates.start && incomeDate <= dates.end && !processedIncomes.has(incomeKey)) {
+          cycleIncome += incomeItem.amount; 
+          cycleBills += `<tr><td>${incomeItem.name}</td><td>${formatDateWithLineBreak(incomeDate)}</td><td class="positive right-align">+$${incomeItem.amount.toFixed(2)}</td></tr>`;
+          processedIncomes.add(incomeKey); 
+        }
+      });
+  
+      const leftoverAmount = cycleIncome - cycleTotal; 
+      const leftoverClass = leftoverAmount >= 0 ? 'positive' : 'negative';
+      const formattedStartDate = formatDate(dates.start);
+      const formattedEndDate = formatDate(dates.end);
+  
+      const isOpen = localStorage.getItem(`panel-open-${index}`) === 'true';
+      const panelStyle = isOpen ? 'block' : 'none';
+      const toggleText = isOpen ? 'Hide' : 'Show';
+  
+      accordionContainer.innerHTML += `
+      <div class="cycle-summary cycle-${index}">
+        <div class="cycle-info">
+          <span class="right-align">${formattedStartDate} - ${formattedEndDate}</span>
+        </div>
+        <div class="income-summary">
+          <div class="box1">
+              <div class="img-container">
+                  <img src="img/Vector (1).png">
+              </div>
+              <div class="title-container">
+                  <h3>Income</h3>
+              </div>
+              <div class="cycle">
+                  <span class="price-data">$${cycleIncome.toFixed(2)}</span>
+              </div>
+           </div>
+           <div class="box1">
+              <div class="img-container">
+                  <img src="img/Vector (2).png">
+              </div>
+              <div class="title-container">
+                  <h3>Estimated bills to pay</h3>
+              </div>
+              <div class="cycle">
+                  <span class="price-data negative">-$${cycleTotal.toFixed(2)}</span>
+              </div>
+           </div>
+           <div class="box1">
+              <div class="img-container">
+                  <img src="img/Vector (3).png">
+              </div>
+              <div class="title-container">
+                  <h3>Leftover</h3>
+              </div>
+              <div class="cycle">
+                  <span class="price-data ${leftoverClass}">$${leftoverAmount.toFixed(2)}</span>
+              </div>
+           </div>
+    
+        </div>
+           <div class="mxc">
+        <button class="accordion-btn" data-index="${index}">
+          <span>Bills list</span>
+          <span class="toggle-text">${toggleText}</span>
+        </button>
+        <div class="panel-content" style="display: ${panelStyle};">
+          <table>
+            ${cycleBills}
+          </table>
+        </div>
+        </div>
+      </div>
+      `;
+        var rows = document.querySelectorAll('.cycle-'+index+' table tr');
+  
+          rows = Array.prototype.slice.call(rows);
+      
+          rows.sort(function(rowA, rowB) {
+              var aValue = rowA.querySelector(`td:nth-child(2)`).getAttribute('data-date');
+              var bValue = rowB.querySelector(`td:nth-child(2)`).getAttribute('data-date');
+      
+              return aValue - bValue;
+          });
+      
+          // Append the sorted rows to the table
+          var table = document.querySelector('.cycle-'+index+' table');
+          rows.forEach(function(row) {
+              table.appendChild(row);
+          });
+      }
+      
+    });
+  }
 
 function updateMonthlyAccordion(chartData) {
     const accordionContainer = document.getElementById('accordionContainer');
@@ -1618,7 +1776,7 @@ function updateChart(chartData) {
 function resetLocalStorage() {
     if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
         localStorage.clear();
-        window.location.href = window.location.href;
+        window.location.href = 'index.html';
     }
 }
 
@@ -1652,12 +1810,7 @@ function updateIncome() {
     payday = document.getElementById('editPayday').value;
     saveToLocalStorage();
 
-    // Update the income table without reloading
-    updateIncomeTable(payFrequency, income);
-
-    // Close modal
-    closeIncomeModal();
-    updateAccordion();
+    location.reload();
 }
 
 window.onclick = function(event) {
@@ -1692,18 +1845,18 @@ function deleteOldPayCycles() {
 }
 
 function updateTagDropdown() {
-    const tagList = document.getElementById('tagList');
+    // const tagList = document.getElementById('tagList');
     const existingTagSelect = document.getElementById('existingTag');
-    const tagFilter = document.getElementById('tagFilter');
+    // const tagFilter = document.getElementById('tagFilter');
     
-    tagList.innerHTML = '';
+    // tagList.innerHTML = '';
     existingTagSelect.innerHTML = '';
-    tagFilter.innerHTML = '<option value="all">All</option>'; // Reset and add "All" option
+    // tagFilter.innerHTML = '<option value="all">All</option>'; // Reset and add "All" option
 
     tags.forEach(tag => {
         const option = document.createElement('option');
         option.value = tag;
-        tagList.appendChild(option);
+        // tagList.appendChild(option);
 
         const selectOption = document.createElement('option');
         selectOption.value = tag;
@@ -1713,7 +1866,7 @@ function updateTagDropdown() {
         const filterOption = document.createElement('option');
         filterOption.value = tag;
         filterOption.textContent = tag;
-        tagFilter.appendChild(filterOption);
+        // tagFilter.appendChild(filterOption);
     });
 }
 

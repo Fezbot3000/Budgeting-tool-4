@@ -48,10 +48,7 @@ a.addbill {
 .right-align {
     text-align: right;
 }
-
-.positive {
-    color: green;
-}
+ 
 
 .negative {
     color: #333;
@@ -1041,7 +1038,12 @@ input[type="checkbox"] {
 .positive {
     color: #46e09d;
 }
-
+span.price-data.positive {
+    color: #46e09d !important;
+}
+span.price-data.negative{
+    color: #fe6362  !important;
+}
 .negative {
     color: #fe6362;
 }
