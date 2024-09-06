@@ -890,3 +890,7 @@ canvas#financialChart {
     position: relative;
     min-height: 500px;
 }
+
+div#accordionContainer2 .cycle-info {
+    justify-content: flex-start;
+}

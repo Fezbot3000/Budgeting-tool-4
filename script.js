@@ -297,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAccordion2();
     }
     
+    
 });
 // document.getElementById('viewMode').addEventListener('change', toggleViewMode);
 /*
@@ -1903,12 +1904,14 @@ function deleteOldPayCycles() {
 function updateTagDropdown() {
     // const tagList = document.getElementById('tagList');
     const existingTagSelect = document.getElementById('existingTag');
-    // const tagFilter = document.getElementById('tagFilter');
+    const tagFilter = document.getElementById('tagFilter');
     
     // tagList.innerHTML = '';
     existingTagSelect.innerHTML = '';
-    // tagFilter.innerHTML = '<option value="all">All</option>'; // Reset and add "All" option
-
+    if (tagFilter !== null)
+    {
+        tagFilter.innerHTML = '<option value="all">All</option>';
+    }
     tags.forEach(tag => {
         const option = document.createElement('option');
         option.value = tag;
@@ -1919,10 +1922,13 @@ function updateTagDropdown() {
         selectOption.textContent = tag;
         existingTagSelect.appendChild(selectOption);
 
-        const filterOption = document.createElement('option');
-        filterOption.value = tag;
-        filterOption.textContent = tag;
-        // tagFilter.appendChild(filterOption);
+        if (tagFilter !== null)
+        {
+            const filterOption = document.createElement('option');
+            filterOption.value = tag;
+            filterOption.textContent = tag;
+            tagFilter.appendChild(filterOption);
+        }
     });
 }
 
