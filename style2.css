@@ -894,3 +894,6 @@ canvas#financialChart {
 div#accordionContainer2 .cycle-info {
     justify-content: flex-start;
 }
+a.menu-act path {
+    fill: #2FA6FF;
+}
