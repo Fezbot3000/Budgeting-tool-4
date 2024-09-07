@@ -839,7 +839,7 @@ body.dark-mode #billModal .modal-footer button:hover {
 ======================================== */
 .cycle-info {
     display: flex;
-    justify-content: center; /* Center the content horizontally */
+    justify-content: start; /* Center the content horizontally */
     align-items: center;
     padding: 10px 0;
     margin-bottom: 10px;

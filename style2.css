@@ -162,7 +162,7 @@ button.add-bill {
     border-radius: 8px;
 }
 .table-container {
-    margin-top: 40px;
+    margin-top: 0;
 }
 
 .table-container th, .table-container td {
@@ -339,7 +339,7 @@ button.add-bill {
     border-radius: 8px;
 }
 .table-container {
-    margin-top: 40px;
+    margin-top: 0;
 }
 
 .table-container th, .table-container td {
@@ -384,7 +384,15 @@ span.price {
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: center;
+    justify-content: space-between;
+}
+
+.midbox .box1 {
     justify-content: space-around;
+}
+
+.midbox .title-container {
+    width: 46% !important;
 }
 
 body {
@@ -433,7 +441,7 @@ h2,h3 {
     text-align: right;
 }
 .title-container {
-    width: 46%;
+    width: 62%;
 }
 
 span.price-data {
@@ -549,13 +557,10 @@ ul.sett li:last-child {
 }
 .cycle-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-bottom: 20px;
 }
 
-.left-content {
-    width: 30%;
-}
 
 .left-content ul {
     list-style: none;
@@ -631,20 +636,11 @@ div#billModal {
     padding: 0;
 }
 
-.modal-content {
-    margin: 0;
-    width: 100%;
-    max-width: unset !important;
-    box-sizing: border-box;
-    height: 100%;
-}
 
 div#billModal * {
     color: #000;
 }
-.modal-content {
-    padding: 30% 20px;
-}
+
 select#tagFilter option {
     color: #000;
 }
@@ -658,9 +654,6 @@ button#submitBill {
     border-radius: 8px;
 }
 
-span.close {
-    display: none;
-}
 a.go-back {
     font-family: Open Sans;
     font-size: 16px;
@@ -893,4 +886,35 @@ canvas#financialChart {
 
 div#accordionContainer2 .cycle-info {
     justify-content: flex-start;
+}
+a.menu-act path {
+    fill: #2FA6FF;
+}
+.cycle-header {
+    position: absolute;
+    width: 100%;
+}
+
+.main-container {
+    position: relative;
+}
+
+.left-content {
+    margin-top: 10px;
+}
+#billsTable {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    margin-top: 30px;
+}
+.bhead {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+form#incomeEditForm {
+    position: relative;
+    padding-bottom: 63px;
 }

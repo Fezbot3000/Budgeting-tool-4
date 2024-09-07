@@ -112,9 +112,8 @@ function updateIncomeTable(payFrequency, income) {
 
     var savingsper = (potentialSavings/totalYearlyIncome)*100;
     savingsper = savingsper.toFixed(2);
-    update_ct_data(billsper,savingsper);
-    document.getElementById('bills_dt').textContent = billsper;
-        document.getElementById('savings_dt').textContent = savingsper;
+    // update_ct_data(billsper,savingsper);
+   
 }
 
 function update_ct_data(bills,savings) {
@@ -297,7 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAccordion2();
     }
     
-    
+       // Check if the browser supports service workers and register one
+       if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js');
+    }
 });
 // document.getElementById('viewMode').addEventListener('change', toggleViewMode);
 /*
@@ -791,9 +793,7 @@ function removeOneOffIncome(index) {
     if (confirmed) {
         oneOffIncomes.splice(index, 1);
         saveOneOffIncomesToLocalStorage();
-        updateIncomeTableWithOneOffIncomes();
-        updateBillsTable();
-        updateAccordion();
+        location.reload();
     }
 }
 
@@ -1639,7 +1639,7 @@ function updateMonthlyAccordion(chartData) {
             if (incomeMonth === new Date(monthYear).getMonth() && incomeYear === new Date(monthYear).getFullYear()) {
                 if (!addedOneOffIncomes.has(incomeItem.name)) {
                     monthIncome += incomeItem.amount; 
-                    billsForMonth += `<tr><td>${incomeItem.name}</td><td>${incomeDate.getDate()}${formatDaySuffix(incomeDate.getDate())}</td><td class="positive right-align">+$${incomeItem.amount.toFixed(2)}</td></tr>`;
+                    // billsForMonth += `<tr><td>${incomeItem.name}</td><td>${incomeDate.getDate()}${formatDaySuffix(incomeDate.getDate())}</td><td class="positive right-align">+$${incomeItem.amount.toFixed(2)}</td></tr>`;
                     addedOneOffIncomes.add(incomeItem.name);
                 }
             }
