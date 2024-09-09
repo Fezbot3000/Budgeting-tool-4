@@ -156,6 +156,9 @@
             </div>
             
             <div class="bhead">
+            <div class="left-content">
+                <a class="hbilllist" href="#">Hide bill list</a>
+            </div>
             <div class="right-content">
                 <button class="btn btn-outline income-opn">Add income</button>
                 <button class="btn bill-opn">Add a bill</button>
@@ -440,6 +443,22 @@
             {
                 $('.tab-menu a[data-target="month-body"]').trigger('click');
             }
+        });
+        $('a.hbilllist').click(function(){
+            if(jQuery(this).hasClass('bactive'))
+            {
+                jQuery('table#billsTable').show();
+                jQuery(this).removeClass('bactive');
+                jQuery(this).text('Hide bill list');
+            }
+            else
+            {
+                jQuery('table#billsTable').hide();
+                jQuery(this).addClass('bactive');
+                jQuery(this).text('Show bill list');
+            }
+          
+            return false;
         });
     </script>
 </body>

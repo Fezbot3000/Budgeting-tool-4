@@ -589,8 +589,14 @@ button.btn.btn-outline {
     color: #fff;
     margin-right: 5px;
 }
-
+.btn.bill-opn:hover {
+    background: #d0d0d0 !important;
+}
+.btn.bill-opn{
+    background: white !important;
+}
 button.btn {
+
     color: #000;
     font-family: Open Sans;
     font-size: 13px;
@@ -903,7 +909,6 @@ a.menu-act path {
     margin-top: 10px;
 }
 #billsTable {
-    display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
@@ -911,10 +916,42 @@ a.menu-act path {
 }
 .bhead {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-top: 30px;
 }
 form#incomeEditForm {
     position: relative;
     padding-bottom: 63px;
 }
+a.hbilllist {
+    font-family: Open Sans;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 21.79px;
+    text-align: center;
+    color: var(--Blue, #2FA6FF);
+    text-decoration: none;
+}
+@media only screen and (max-width: 600px) {
+
+    .midbox {
+        display: block !important;
+    }
+    .box {
+        width: unset !important;
+        float: unset !important;
+       
+    }
+    .midbox .settings-menu {
+        width: unset !important;
+    }
+    .midbox .box {
+        margin: 10px 0;
+    }
+}
+@media screen and (min-width: 600px) {
+    .panel-content table td {
+        padding-left: 20px;
+    }
+    }
+     
