@@ -1,0 +1,301 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1c1c1e; /* Dark background based on your design */
+    color: #fff; /* Default text color should be white */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+header {
+    background-color: #1c1c1e;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    color: white; /* White text for the header */
+}
+
+/* Main content */
+main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    max-width: 100%;
+}
+
+/* Home Page Journal Entry Styles */
+.journal-entry {
+    background-color: #2c2c2e; /* Darker card background */
+    border-radius: 12px;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+    color: white; /* Set text color to white */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.journal-entry .entry-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-gap: 10px;
+    margin-bottom: 10px;
+}
+
+.journal-entry .entry-images img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.journal-entry .journal-text {
+    font-size: 14px;
+    margin-top: 10px;
+    color: white; /* White text for the journal entry */
+}
+
+/* Date and Dots Section */
+.journal-entry .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #444; /* Adds 1px line */
+    padding-top: 5px;
+}
+
+.journal-entry .three-dots {
+    cursor: pointer;
+    font-size: 18px;
+    color: white; /* White dots */
+}
+
+.journal-entry .date {
+    font-size: 12px;
+    color: #b3b3b3; /* Lighter color for date */
+}
+
+/* Three Dots Menu */
+.three-dot-menu {
+    position: absolute;
+    z-index: 999;
+    background-color: #333; /* Adjust as needed */
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    display: none;
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+/* Styling for the menu items */
+.three-dot-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.three-dot-menu li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white; /* Set the text to white */
+    background-color: transparent; /* Transparent background */
+}
+
+.three-dot-menu li:hover {
+    background-color: #3a3a3c; /* Slightly lighter color on hover */
+    border-radius: 4px; /* Rounded corners for hover effect */
+}
+
+/* Full Screen Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #2c2c2e; /* Same as journal-entry background */
+    color: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#entryDate {
+    font-size: 16px;
+}
+
+#doneButton {
+    background-color: #6e44ff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-grid img {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+#journalText {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3a3a3c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    height: 100px;
+    font-size: 16px;
+    resize: none;
+}
+
+.add-image-icon {
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #6e44ff;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Floating Add Button */
+.add-entry-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #6e44ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Custom Date Picker Modal */
+.custom-date-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.custom-date-picker-content {
+    background-color: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.custom-date-picker-content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+#datePickerInput {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+/* Image modal styling */
+#imageModal {
+    display: none; /* Default hidden */
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+#imageModalContent {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 8px; /* Rounded edges for the images */
+    object-fit: contain; /* Maintain aspect ratio */
+}
+
+#closeImageModal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #ffffff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Remove Image Button */
+#removeImageButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}

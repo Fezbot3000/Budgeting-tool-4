@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal App</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include EXIF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+</head>
+<body>
+
+    <!-- Full Screen Modal for Adding/Editing Entries -->
+    <div id="entryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="bookmark-icon" id="bookmarkIcon">🔖</span>
+                <span id="entryDate"></span>
+                <span class="menu-icon" id="modalMenuButton">⋮</span> <!-- Click this to open the modal menu -->
+                <button id="doneButton">Done</button>
+            </div>
+            
+            <!-- Image Grid -->
+            <div class="image-grid">
+                <!-- Images will be dynamically added here -->
+            </div>
+
+            <!-- Text Input -->
+            <textarea id="journalText" placeholder="Start writing..."></textarea>
+
+            <!-- File Upload -->
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;" multiple>
+            <label for="imageUpload" class="add-image-icon">🖼️ Add Images</label>
+        </div>
+    </div>
+
+    <!-- Modal Three-Dot Menu Pop-up -->
+    <div id="modalThreeDotMenu" class="three-dot-menu">
+        <ul>
+            <li id="modalEntryDate">Entry Date: </li>
+            <li id="modalCustomDate">Custom Date</li>
+            <li id="modalDeleteEntry">Delete</li>
+        </ul>
+    </div>
+
+    <!-- Custom Date Picker Modal -->
+    <div id="customDatePickerModal" class="custom-date-modal">
+        <div class="custom-date-picker-content">
+            <header>
+                <button id="cancelDate">Cancel</button>
+                <h3>Set Custom Date</h3>
+                <button id="confirmDate">Done</button>
+            </header>
+            <div class="date-picker-body">
+                <input type="date" id="datePickerInput">
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page Three-Dot Menu Pop-up -->
+    <div id="homeThreeDotMenu" class="three-dot-menu">
+        <ul>
+            <li id="homeEditEntry">Edit</li>
+            <li id="homeBookmarkEntry">Bookmark</li>
+            <li id="homeDeleteEntry">Delete</li>
+        </ul>
+    </div>
+
+    <!-- Main Journal Page -->
+    <main>
+        <header>
+            <h2>Journal</h2>
+        </header>
+
+        <!-- Journal Entries Section -->
+        <section id="journalEntries" class="journal-entries">
+            <!-- Journal entries will be dynamically added here -->
+        </section>
+
+        <!-- Floating Add Button -->
+        <button class="add-entry-btn" id="addEntryButton">+</button>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span id="closeImageModal" class="close">&times;</span>
+        <img id="imageModalContent" class="modal-image">
+        <button id="removeImageButton" class="remove-image">Remove Image</button>
+        <div id="imageDetails" class="image-details">No metadata available</div> <!-- Added for EXIF metadata -->
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
